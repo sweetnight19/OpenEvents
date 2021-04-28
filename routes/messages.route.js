@@ -1,7 +1,8 @@
 const router = require("express").Router();
 const messages = require("../controller/messages.controller");
-const authenticate = require("../authentication");
 
+// MIDDLEWARE
+const authenticate = require("../authentication");
 router.use(authenticate);
 
 // ----- Private ----- //
@@ -17,5 +18,4 @@ router.get("/:id", messages.getMessagesById);
 
 // ------------------- //
 
-
-
+module.exports = router;
