@@ -1,37 +1,39 @@
 const router = require("express").Router();
 const users = require("../controller/users.controller");
-const usersPublic = require("../public/userLogin");
 
 // MIDDLEWARE
 const authenticate = require("../authentication");
-router.use(authenticate);
+//router.use(authenticate);
 
 // ----- Public ----- //
 
 //POST /users/login
-router.post("/login", usersPublic.login);
+router.post("/login", users.login);
 
 // POST /users Crea un usuari amb els següents parámetres
-router.post("/", usersPublic.create);
+router.post("/", users.addUser);
 
 // ------------------- //
 
 // ----- Private ----- //
 
 // GET /users Retorna tots el ususaris
-//router.get("/", users);
+router.get("/", authenticate, users.getUsers);
 
 // GET /users/ID Retorna l'usuari amb l'ID
-//router.get("/:ID", users);
+router.get("/:ID", authenticate, users.getUsersByID);
 
 // GET /users/search Busca l'usuari que tingui el email, nom o cognom semblant al querystring s.
-//router.get("/search", users);
+router.get("/search", authenticate, users.searchUser);
 
 // PUT /users/ Modifica l'usuari autenticat
-//router.put("/", users);
+router.put("/", authenticate, users.changeInfoUser);
 
 // DELETE /users
-//router.delete("/", users);
+router.delete("/", authenticate, users.deleteUser);
+
+// GET /users/ID/events Obté la llista d'events (que n'és propietari) l'usuari ID
+router.get("/:ID/events",authenticate,users.searchUserEvents);
 
 // ------------------- //
 

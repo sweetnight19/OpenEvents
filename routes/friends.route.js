@@ -8,19 +8,19 @@ router.use(authenticate);
 // ----- Private ----- //
 
 // GET /friends/requests Obté la llista d'usuaris que han enviat una petició d'amistat a l'usuari autenticat.
-router.get("/requests", friends.);
+router.get("/requests", authenticate, friends.getFriends);
 
 // GET /friends Obté la llista d'usuaris que són amics amb l'usuari autenticat
-router.get("/", friends.);
+router.get("/", authenticate, friends.getFriends);
 
 // POST /friends/ID Crea una petició d'amistat de l'usuari autenticat a l'usuari ID.
-router.post("/:id", friends.);
+router.post("/:id", authenticate, friends.postFriendsRequest);
 
 // PUT /friends/ID Accepta la petició d'amistad de l'usuari ID (que ha rebut l'usuari autenticat)
-router.put("/:id", friends.);
+router.put("/:id", authenticate, friends.acceptFriendsRequest);
 
 // DELETE /friends/ID Denega la petició d'amistad i/o (si ja són amics) l'esborra de la llista d'amics.
-router.delete("/:id", friends.);
+router.delete("/:id", authenticate, friends.deleteFriendsRequest);
 
 // ------------------- //
 
