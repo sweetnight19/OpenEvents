@@ -3,7 +3,6 @@ const users = require("../controller/users.controller");
 
 // MIDDLEWARE
 const authenticate = require("../authentication");
-//router.use(authenticate);
 
 // ----- Public ----- //
 
@@ -14,6 +13,8 @@ router.post("/login", users.login);
 router.post("/", users.addUser);
 
 // ------------------- //
+
+router.use(authenticate);
 
 // ----- Private ----- //
 

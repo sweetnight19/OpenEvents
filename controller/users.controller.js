@@ -1,83 +1,74 @@
-const { connection: conn } = require("../database/connection");
+const { connection: sql } = require("../database/connection");
 
-async function getByLogin(email, password) {
-    let query = "SELECT * FROM `users` WHERE `email`= ? AND `password`= ?";
-    const [rows] = await conn.promise().query(query, [email, password]);
+async function getByLogin(email) {
+    let query = `SELECT * FROM users WHERE email= ?`;
+    const [rows] = await sql.promise().query(query, [email]);
+    console.log(rows[0]);
     return rows[0];
 }
 
 async function login(req, res, next) {
-    console.log("login");
     try {
+        let user;
         try {
-            const [resultado] = await conn.promise().query("SELECT * FROM `users` WHERE `email`= ? AND `password`= ?", [req.body.email, req.body.password]);
+            user = await getByLogin(req.body.email);
         } catch (ex) {
-            return next({
-                status: 500,
-                error: "Error en la base de datos",
-                trace: "ex",
-            });
+            res.status(404).json("Recurso no encontrado").end();
         }
-
-        if (!resultado[0]) {
-            return next({ status: 404, error: "El body no és correcte" });
+        if (!user) {
+            res.status(404).json("Recurso no encontrado").end();
         }
-
-
-        console.log(`req.body.password: ${req.body.password}, user.password: ${user.password}`);
-        /*
+        const bcrypt = require("bcrypt");
         bcrypt.compare(req.body.password, user.password, (error, result) => {
             if (error) {
-                return next({ status: 401, error: "Recurso no encontrado" });
+                res.status(404).json("Recurso no encontrado").end();
+
             }
             if (!result) {
-                return next({ status: 404, error: "Recurso no encontrado" });
+                res.status(404).json("Recurso no encontrado").end();
             }
             const jwt = require("jsonwebtoken");
             const token = jwt.sign(
                 JSON.stringify(user),
                 process.env.ACCESS_TOKEN_SECRET
             );
-            res.json({ "accesToken": token });
+            res.status(200).json({ "accessToken": token }).end();
         });
-        */
-        if (req.body.password == resultado.password) {
-            const jwt = require("jsonwebtoken");
-            const token = jwt.sign(
-                JSON.stringify(user),
-                process.env.ACCESS_TOKEN_SECRET
-            );
-            res.json({ "accesToken": token });
-        } else {
-            console.log("no son iguales");
-        }
     } catch (error) {
-        next({ status: 500, error: "Recurso no encontrado" });
+        res.status(500).json("Recurso no encontrado").end();
     }
 }
-async function addUser(req, res, next) {
-    console.log("addUser");
-    const user2 = {
-        name: req.body.name,
-        last_name: req.body.last_name,
-        email: req.body.email,
-        password: req.body.password,
-    };
 
-    //console.log(user2);
-    try {
-        const [resultado] = await conn.promise().query("INSERT INTO `users` SET ?", user2);
-        const user = {
-            id: resultado.insertId,
-            name: req.body.name,
-            last_name: req.body.last_name,
-            email: req.body.email,
-            password: req.body.password,
-        };
-        return res.json({ status: 201, user });
-    } catch (ex) {
-        return next({ status: 409, error: "No s'ha pogut insertar correctament" });
-    }
+async function insert(user) {
+    const [resultado] = await sql.promise().query("INSERT INTO users SET ?", user);
+    user.id = resultado.insertId;
+    return user;
+}
+
+async function addUser(req, res, next) {
+    const bcrypt = require("bcrypt");
+    const saltRounds = 10;
+    const myPlaintextPassword = req.body.password;
+
+    bcrypt.hash(myPlaintextPassword, saltRounds, async (err, hash) => {
+        if (err) {
+            res.status(500).json("Error al encriptar el password").end();
+        }
+        req.body.password = hash;
+        try {
+            const response = await insert(req.body);
+            const user = {
+                id: response.id,
+                name: response.name,
+                last_name: response.last_name,
+                email: response.email,
+                password: response.password,
+            };
+            res.status(201).json(user).end();
+        } catch (ex) {
+            res.status(409).json("Error al insertar el usuario").end();
+        }
+    });
 }
 async function getUsers(req, res, next) { }
 async function getUsersByID(req, res, next) { }

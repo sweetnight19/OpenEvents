@@ -3,7 +3,6 @@ const events = require("../controller/events.controller");
 
 // MIDDLEWARE
 const authenticate = require("../authentication");
-router.use(authenticate);
 
 // ----- Public ----- //
 
@@ -14,6 +13,8 @@ router.post("/", events.addEvent);
 router.get("/", events.getEvents);
 
 // ------------------- //
+
+router.use(authenticate);
 
 // ----- Private ----- //
 
