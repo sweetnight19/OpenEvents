@@ -3,7 +3,6 @@ const friends = require("../controller/friends.controller");
 
 // MIDDLEWARE
 const authenticate = require("../authentication");
-router.use(authenticate);
 
 // ----- Private ----- //
 

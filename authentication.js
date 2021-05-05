@@ -1,28 +1,17 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
-function authenticate(req, res, next) {
-  //verificar si el usuario aun existe
+function authenticate(req, response, next) {
   const authHeader = req.header("Authorization");
-  const token = authHeader && authHeader.split(" ")[1]; //returns or undenifed or the token
+  const token = authHeader && authHeader.split(" ")[1];
 
-  if (token == null)
-    return next({
-      status: "401",
-      error: "No estas autenticado",
-      hint: "Has probado a hacer login? http://localhost:3000/api/users/login",
-    });
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err)
-      return next({
-        status: "401",
-        error: "No estas autenticado",
-        stack: err,
-      });
-
-    // guardo el usuario en la request.
+  if (token == null) {
+    response.status(401).end();
+  }
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, user) {
+    if (err) {
+      return response.status(401).end();
+    }
     req.USER = user;
-
     next();
   });
 }

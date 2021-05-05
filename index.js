@@ -26,10 +26,11 @@ app.all("*", (req, res, next) => {
     error: "Not found",
   });
 });
-
+/*
 app.use((err, req, res, next) => {
   res.status(err.status).json(err);
 });
+*/
 
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);

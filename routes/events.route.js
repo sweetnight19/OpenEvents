@@ -14,8 +14,6 @@ router.get("/", events.getEvents);
 
 // ------------------- //
 
-router.use(authenticate);
-
 // ----- Private ----- //
 
 // GET /events/ID Retorna l'event amb l'IDRepresentació del recurs Descripció

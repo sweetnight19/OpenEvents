@@ -8,13 +8,13 @@ router.use(authenticate);
 // ----- Private ----- //
 
 // POST /messages Crea un missatge
-router.post("/", authenticate, messages.addMessage);
+router.post("/", messages.addMessage);
 
 // GET /messages/users Obté tots els usuaris que han enviat algún missatge a l'usuari autenticat.
-router.get("/users", authenticate, messages.getMessage);
+router.get("/users", messages.getMessage);
 
 // GET /messages/USER_ID Obté tots els missatges de l'USER_ID a l'usuari autenticat.
-router.get("/:id", authenticate, messages.getMessagesById);
+router.get("/:id", messages.getMessagesById);
 
 // ------------------- //
 

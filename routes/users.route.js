@@ -14,8 +14,6 @@ router.post("/", users.addUser);
 
 // ------------------- //
 
-router.use(authenticate);
-
 // ----- Private ----- //
 
 // GET /users Retorna tots el ususaris
