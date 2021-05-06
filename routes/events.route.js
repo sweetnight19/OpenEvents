@@ -6,18 +6,18 @@ const authenticate = require("../authentication");
 
 // ----- Public ----- //
 
-// POST /event Crea un event associat a l'usuari autenticat.
-router.post("/", events.addEvent);
-
 // GET /events Retorna tots el events
 router.get("/", events.getEvents);
+
+// GET /events/ID Retorna l'event amb l'IDRepresentació del recurs Descripció
+router.get("/:id", authenticate, events.getEventsById);
 
 // ------------------- //
 
 // ----- Private ----- //
 
-// GET /events/ID Retorna l'event amb l'IDRepresentació del recurs Descripció
-router.get("/:id", authenticate, events.getEventsById);
+// POST /event Crea un event associat a l'usuari autenticat.
+router.post("/", authenticate, events.addEvent);
 
 // PUT /events/ID Modifica l'event autenticat
 router.put("/:id", authenticate, events.putEventsById);

@@ -7,7 +7,7 @@ const authenticate = require("../authentication");
 // ----- Private ----- //
 
 // GET /friends/requests Obté la llista d'usuaris que han enviat una petició d'amistat a l'usuari autenticat.
-router.get("/requests", authenticate, friends.getFriends);
+router.get("/requests", authenticate, friends.getFriendsRequest);
 
 // GET /friends Obté la llista d'usuaris que són amics amb l'usuari autenticat
 router.get("/", authenticate, friends.getFriends);
