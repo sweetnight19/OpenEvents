@@ -1,16 +1,25 @@
 const { connection: conn } = require("../database/connection");
 
 async function addEvent(req, res) {
+    if (req.body.name == undefined || req.body.location == undefined || req.body.description == undefined || req.body.eventStart_date == undefined || req.body.eventEnd_date == undefined || req.body.n_participators == undefined || req.body.type == undefined) {
+        return res.status(400).end();
+    }
     try {
         const [resultado] = await conn.promise().query("INSERT INTO `events`(`name`, `owner_id`, `location`, `description`, `eventStart_date`, `eventEnd_date`, `n_participators`, `type`) VALUES (?,?,?,?,?,?,?,?)", [req.body.name, req.USER.id, req.body.location, req.body.description, req.body.eventStart_date, req.body.eventEnd_date, req.body.n_participators, req.body.type]);
-        try {
-            const [post] = await conn.promise().query("SELECT * FROM `events` WHERE `name`= ? AND `type`= ? AND owner_id= ?", [req.body.name, req.body.type, req.USER.id]);
-            console.log(post[0]);
-            return res.status(204).json(post[0]).end();
-        } catch (ex) {
-            console.log(ex);
-            return res.status(409).end();
-        }
+        const event = {
+            id: resultado.insertId,
+            name: req.body.name,
+            owner_id: req.USER.id,
+            date: Date.now,
+            location: req.body.location,
+            description: req.body.description,
+            eventStart_date: req.body.eventStart_date,
+            eventEnd_date: req.body.eventEnd_date,
+            n_participators: req.body.n_participators,
+            type: req.body.type
+        };
+        console.log(event);
+        return res.status(204).json(event).end();
     } catch (ex) {
         console.log(ex);
         return res.status(409).end();
@@ -18,7 +27,7 @@ async function addEvent(req, res) {
 }
 async function getEvents(req, res) {
     try {
-        const [rows, fields] = await conn.promise().query("SELECT * FROM `events`");
+        const [rows, fields] = await conn.promise().query("SELECT * FROM `events` ORDER BY events.id");
         if (rows.length === 0) {
             return res.status(500).end();
         }
@@ -76,7 +85,7 @@ async function deleteEventsById(req, res, next) {
                 if (rows.length === 0) {
                     return res.status(500).end();
                 }
-                return res.status(204).json(rows[0]).end();
+                return res.status(204).end();
             } catch (ex) {
                 return res.status(409).end();
             }

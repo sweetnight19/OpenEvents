@@ -19,11 +19,11 @@ router.post("/", users.addUser);
 // GET /users Retorna tots el ususaris
 router.get("/", authenticate, users.getUsers);
 
-// GET /users/ID Retorna l'usuari amb l'ID
-router.get("/:ID", authenticate, users.getUsersByID);
-
 // GET /users/search Busca l'usuari que tingui el email, nom o cognom semblant al querystring s.
 router.get("/search", authenticate, users.searchUser);
+
+// GET /users/ID Retorna l'usuari amb l'ID
+router.get("/:id", authenticate, users.getUsersByID);
 
 // PUT /users/ Modifica l'usuari autenticat
 router.put("/", authenticate, users.changeInfoUser);
@@ -32,14 +32,19 @@ router.put("/", authenticate, users.changeInfoUser);
 router.delete("/", authenticate, users.deleteUser);
 
 // GET /users/ID/events Obté la llista d'events (que n'és propietari) l'usuari ID
-router.get("/:ID/events",authenticate,users.searchUserEvents);
+router.get("/:id/events", authenticate, users.getListAssistancesEvents);
+
+// GET /users/ID/events/future Obté la llista d'events (que n'és propietari) l'usuari ID que encara no han succeït
+router.get("/:id/events", authenticate, users.getListAssistancesEventsFuture);
+
+// GET /users/ID/events/finished Obté la llista d'events (que n'és propietari) l'usuari ID que ja han acabat
+router.get("/:id/events", authenticate, users.getListAssistancesEventsPast);
+
+// GET /users/ID/events/current Obté la llista d'events (que n'és propietari) l'usuari ID que están succeint en aquest moment.
+router.get("/:id/events", authenticate, users.getListAssistancesEventsCurrent);
 
 // ------------------- //
 
-// GET /users/ID/events Obté la llista d'events (que n'és propietari) l'usuari ID
-// GET /users/ID/events/future Obté la llista d'events (que n'és propietari) l'usuari ID que encara no han succeït
-// GET /users/ID/events/finished Obté la llista d'events (que n'és propietari) l'usuari ID que ja han acabat
-// GET /users/ID/events/current Obté la llista d'events (que n'és propietari) l'usuari ID que están succeint en aquest moment.
 // GET /users/ID/assistances Obté la llista d'assistències a events per a l'usuari ID
 // GET /users/ID/assistances/future Obté la llista d'assistències a events per a l'usuari ID que encara no han succeît
 // GET /users/ID/assistances/finished Obté la llista d'assistències a events per a l'usuari ID que ja ha finalitzat
