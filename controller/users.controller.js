@@ -32,7 +32,7 @@ async function login(req, res) {
                 JSON.stringify(user),
                 process.env.ACCESS_TOKEN_SECRET
             );
-            res.status(200).json({ "accessToken": token }).end();
+            res.status(200).json({ "accessToken": token });
         });
     } catch (error) {
         res.status(500).json("Recurso no encontrado").end();
@@ -154,47 +154,95 @@ async function deleteUser(req, res) {
 }
 
 async function getListAssistancesEvents(req, res) {
-    console.log(req.params);
     try {
         const [rows, fields] = await sql.promise().query("SELECT events.* FROM `events` INNER JOIN users ON events.owner_id=users.id WHERE users.id=?", [req.params.id]);
         return res.status(200).json(rows).end();
     } catch (ex) {
-        console.log(ex);
         return res.status(409).end();
     }
 }
 
 async function getListAssistancesEventsFuture(req, res) {
-    console.log(req.params);
     try {
         const [rows, fields] = await sql.promise().query("SELECT events.* FROM `events` INNER JOIN users ON events.owner_id=users.id WHERE users.id=19 AND events.eventStart_date>CURRENT_TIMESTAMP", [req.params.id]);
         return res.status(200).json(rows).end();
     } catch (ex) {
-        console.log(ex);
         return res.status(409).end();
     }
 }
 
 async function getListAssistancesEventsPast(req, res) {
-    console.log(req.params);
     try {
         const [rows, fields] = await sql.promise().query("SELECT events.* FROM `events` INNER JOIN users ON events.owner_id=users.id WHERE users.id=19 AND events.eventEnd_date<CURRENT_TIMESTAMP", [req.params.id]);
         return res.status(200).json(rows).end();
     } catch (ex) {
-        console.log(ex);
         return res.status(409).end();
     }
 }
 
 async function getListAssistancesEventsCurrent(req, res) {
-    console.log(req.params);
     try {
         const [rows, fields] = await sql.promise().query("SELECT events.* FROM `events` INNER JOIN users ON events.owner_id=users.id WHERE users.id=19 AND events.eventStart_date<CURRENT_TIMESTAMP AND events.eventEnd_date>CURRENT_TIMESTAMP", [req.params.id]);
         return res.status(200).json(rows).end();
+    } catch (ex) {
+        return res.status(409).end();
+    }
+}
+
+async function getListAssistances(req, res) {
+    try {
+        const [rows, fields] = await sql.promise().query("SELECT events.*, assistance.comentary,assistance.puntuation FROM events INNER JOIN assistance ON assistance.event_id=events.id WHERE assistance.user_id=?", [req.params.id]);
+        return res.status(200).json(rows).end();
+    } catch (ex) {
+        return res.status(409).end();
+    }
+}
+
+async function getListAssistancesFuture(req, res) {
+    try {
+        const [rows, fields] = await sql.promise().query("SELECT events.*, assistance.comentary,assistance.puntuation FROM events INNER JOIN assistance ON assistance.event_id=events.id WHERE assistance.user_id=? AND CURRENT_TIMESTAMP< events.eventStart_date", [req.params.id]);
+        return res.status(200).json(rows).end();
+    } catch (ex) {
+        return res.status(409).end();
+    }
+}
+
+async function getListAssistancesFinished(req, res) {
+    try {
+        const [rows, fields] = await sql.promise().query("SELECT events.*, assistance.comentary,assistance.puntuation FROM events INNER JOIN assistance ON assistance.event_id=events.id WHERE assistance.user_id=? AND CURRENT_TIMESTAMP > events.eventEnd_date", [req.params.id]);
+        return res.status(200).json(rows).end();
+    } catch (ex) {
+        return res.status(409).end();
+    }
+}
+
+async function getFriends(req, res) {
+    let rows = {};
+
+    try {
+        const [rows1, fields] = await sql.promise().query("SELECT users.id,users.name,users.last_name,users.image,users.email FROM users INNER JOIN friends ON users.id=friends.user_id WHERE friends.status=1 AND friends.user_id_friend=? ORDER BY users.id", [req.params.id]);
+        try {
+            const [rows2, fields] = await sql.promise().query("SELECT users.id,users.name,users.last_name,users.image,users.email FROM users INNER JOIN friends ON users.id=friends.user_id_friend WHERE friends.status=1 AND friends.user_id=? ORDER BY users.id", [req.params.id]);
+            if (rows1.length === 0 && rows2.length === 0) {
+                return res.status(200).json(rows).end();
+            }
+            if (rows1.length === 0) {
+                return res.status(200).json(rows2).end();
+            }
+            if (rows2.length === 0) {
+                return res.status(200).json(rows1).end();
+            }
+            rows.rows1 = rows1;
+            rows.rows2 = rows2;
+            return res.status(200).json(rows).end();
+        } catch (ex) {
+            console.log(ex);
+            return res.status(409).end();
+        }
     } catch (ex) {
         console.log(ex);
         return res.status(409).end();
     }
 }
 
-module.exports = { login, addUser, getUsers, getUsersByID, searchUser, changeInfoUser, deleteUser, getByLogin, getListAssistancesEvents, getListAssistancesEventsFuture, getListAssistancesEventsPast, getListAssistancesEventsCurrent };
+module.exports = { login, addUser, getUsers, getUsersByID, searchUser, changeInfoUser, deleteUser, getByLogin, getListAssistancesEvents, getListAssistancesEventsFuture, getListAssistancesEventsPast, getListAssistancesEventsCurrent, getListAssistances, getListAssistancesFuture, getListAssistancesFinished,getFriends };

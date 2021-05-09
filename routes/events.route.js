@@ -29,7 +29,7 @@ router.delete("/:id", authenticate, events.deleteEventsById);
 router.get("/:id/assistances", authenticate, events.getListAssistancesEvents);
 
 //------ GET /events/ID/assistances/ID_USER Obté la assistència de l'ID_USER que asistirà a l'event ID
-//------ router.get("/:id/assistances/:id_user", events.);
+router.get("/:id/assistances/:id_user", events.getListAssistancesUser);
 
 // POST /events/ID/assistances Crea una assistència de l'usuari autenticat a l'event ID
 router.post("/:id/assistances", authenticate, events.postAssistancesEvents);

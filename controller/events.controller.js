@@ -73,7 +73,7 @@ async function putEventsById(req, res) {
         return res.status(409).end();
     }
 }
-async function deleteEventsById(req, res, next) {
+async function deleteEventsById(req, res) {
     try {
         const [rows, fields] = await conn.promise().query("SELECT `owner_id` FROM `events` WHERE `id`=?", [req.params.id]);
         if (rows.length === 0) {
@@ -96,9 +96,72 @@ async function deleteEventsById(req, res, next) {
         return res.status(409).end();
     }
 }
-async function getListAssistancesEvents(req, res, bext) { }
-async function postAssistancesEvents(req, res, bext) { }
-async function putInfoAssistanceEvent(req, res, next) { }
-async function deleteAssistanceEvent(req, res, next) { }
+async function getListAssistancesEvents(req, res) {
+    let rows = {};
+    try {
+        const [rows, fields] = await conn.promise().query("SELECT users.id, users.name, users.last_name,users.email,users.image,assistance.puntuation, assistance.comentary FROM users INNER JOIN assistance ON users.id =assistance.user_id WHERE assistance.event_id=?", [req.params.id]);
+        return res.status(200).json(rows).end();
+    } catch (ex) {
+        return res.status(409).end();
+    }
+}
 
-module.exports = { addEvent, getEvents, getEventsById, putEventsById, deleteEventsById, getListAssistancesEvents, postAssistancesEvents, putInfoAssistanceEvent, deleteAssistanceEvent };
+async function getListAssistancesUser(req, res) {
+    try {
+        const [rows, fields] = await conn.promise().query("SELECT users.id, users.name, users.last_name,users.email,users.image,assistance.puntuation, assistance.comentary FROM users INNER JOIN assistance ON users.id =assistance.user_id WHERE assistance.event_id=? AND users.id=?", [req.params.id, req.params.id_user]);
+        if (rows.length === 0) {
+            return res.status(500).end();
+        }
+        return res.status(200).json(rows[0]).end();
+    } catch (ex) {
+        return res.status(409).end();
+    }
+}
+async function postAssistancesEvents(req, res) {
+    if (req.body.puntuation == undefined || req.body.comentary == undefined || req.params.id == undefined) {
+        return res.status(400).end();
+    }
+    try {
+        const [resultado] = await conn.promise().query("INSERT INTO `assistance`(`user_id`, `event_id`, `puntuation`, `comentary`) VALUES (?,?,?,?)", [req.USER.id, req.params.id, req.body.puntuation, req.body.comentary]);
+        const event = {
+            user_id: req.USER.id,
+            event_id: req.params.id,
+            puntuation: req.body.puntuation,
+            comentary: req.body.comentary
+        };
+        return res.status(201).json(event).end();
+    } catch (ex) {
+        return res.status(409).end();
+    }
+}
+async function putInfoAssistanceEvent(req, res) {
+    if (req.body.puntuation == undefined || req.body.comentary == undefined || req.params.id == undefined) {
+        return res.status(400).end();
+    }
+    try {
+        const [resultado] = await conn.promise().query("UPDATE `assistance` SET `puntuation`=?,`comentary`=? WHERE `user_id`=? AND `event_id`=?", [req.body.puntuation, req.body.comentary, req.USER.id, req.params.id]);
+        const event = {
+            user_id: req.USER.id,
+            event_id: req.params.id,
+            puntuation: req.body.puntuation,
+            comentary: req.body.comentary
+        };
+        return res.status(201).json(event).end();
+    } catch (ex) {
+        console.log(ex);
+        return res.status(409).end();
+    }
+}
+async function deleteAssistanceEvent(req, res) {
+    try {
+        const [rows, fields] = await conn.promise().query("DELETE FROM `assistance` WHERE `user_id`=? AND `event_id`=?", [req.USER.id, req.params.id]);
+        if (rows.length === 0) {
+            return res.status(500).end();
+        }
+        return res.status(204).end();
+    } catch (ex) {
+        return res.status(409).end();
+    }
+}
+
+module.exports = { addEvent, getEvents, getEventsById, putEventsById, deleteEventsById, getListAssistancesEvents, postAssistancesEvents, putInfoAssistanceEvent, deleteAssistanceEvent, getListAssistancesUser };

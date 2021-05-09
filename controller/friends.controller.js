@@ -33,13 +33,10 @@ async function getFriends(req, res) {
 
     try {
         const [rows1, fields] = await conn.promise().query("SELECT users.id,users.name,users.last_name,users.image,users.email FROM users INNER JOIN friends ON users.id=friends.user_id WHERE friends.status=1 AND friends.user_id_friend=? ORDER BY users.id", [req.USER.id]);
-        if (rows.length === 0) {
-            return res.status(500).end();
-        }
         try {
             const [rows2, fields] = await conn.promise().query("SELECT users.id,users.name,users.last_name,users.image,users.email FROM users INNER JOIN friends ON users.id=friends.user_id_friend WHERE friends.status=1 AND friends.user_id=? ORDER BY users.id", [req.USER.id]);
             if (rows1.length === 0 && rows2.length === 0) {
-                return res.status(500).end();
+                return res.status(200).json(rows).end();
             }
             if (rows1.length === 0) {
                 return res.status(200).json(rows2).end();
