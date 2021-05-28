@@ -3,7 +3,6 @@ const { connection: sql } = require("../database/connection");
 async function getByLogin(email) {
     let query = `SELECT * FROM users WHERE email= ?`;
     const [rows] = await sql.promise().query(query, [email]);
-    console.log(rows[0]);
     return rows[0];
 }
 
@@ -49,11 +48,14 @@ async function addUser(req, res) {
     const bcrypt = require("bcrypt");
     const saltRounds = 10;
     const myPlaintextPassword = req.body.password;
+    const origianlPassword = req.body.password;
 
     bcrypt.hash(myPlaintextPassword, saltRounds, async (err, hash) => {
         if (err) {
             res.status(500).json("Error al encriptar el password").end();
         }
+
+
         req.body.password = hash;
         try {
             const response = await insert(req.body);
@@ -62,7 +64,8 @@ async function addUser(req, res) {
                 name: response.name,
                 last_name: response.last_name,
                 email: response.email,
-                password: response.password,
+                image: "NULL",
+                password: origianlPassword,
             };
             res.status(201).json(user).end();
         } catch (ex) {
@@ -96,7 +99,6 @@ async function getUsersByID(req, res) {
 }
 
 async function searchUser(req, res) {
-    console.log(req.query);
     try {
         const [rows] = await sql.promise().query("SELECT `id`,`name`, `last_name`, `image`,`email` FROM `users` WHERE `name`= ?", [req.query.s]);
         if (rows.length === 0) {
@@ -135,7 +137,6 @@ async function changeInfoUser(req, res) {
             };
             return res.status(200).json(user).end();
         } catch (ex) {
-            console.log(ex);
             return res.status(409).end();
         }
     });
@@ -236,13 +237,11 @@ async function getFriends(req, res) {
             rows.rows2 = rows2;
             return res.status(200).json(rows).end();
         } catch (ex) {
-            console.log(ex);
             return res.status(409).end();
         }
     } catch (ex) {
-        console.log(ex);
         return res.status(409).end();
     }
 }
 
-module.exports = { login, addUser, getUsers, getUsersByID, searchUser, changeInfoUser, deleteUser, getByLogin, getListAssistancesEvents, getListAssistancesEventsFuture, getListAssistancesEventsPast, getListAssistancesEventsCurrent, getListAssistances, getListAssistancesFuture, getListAssistancesFinished,getFriends };
+module.exports = { login, addUser, getUsers, getUsersByID, searchUser, changeInfoUser, deleteUser, getByLogin, getListAssistancesEvents, getListAssistancesEventsFuture, getListAssistancesEventsPast, getListAssistancesEventsCurrent, getListAssistances, getListAssistancesFuture, getListAssistancesFinished, getFriends };

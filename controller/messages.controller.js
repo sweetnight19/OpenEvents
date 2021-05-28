@@ -1,7 +1,6 @@
 const { connection: conn } = require("../database/connection");
 
 async function addMessage(req, res, next) {
-    console.log("addmessage");
     if (req.body.content == undefined || req.body.user_id_send == undefined || req.body.user_id_recived == undefined) {
         return res.status(400).end();
     }
@@ -20,6 +19,7 @@ async function addMessage(req, res, next) {
         return res.status(500).end();
     }
 }
+
 async function getMessage(req, res, next) {
     try {
         const [rows, fields] = await conn.promise().query("SELECT users.id,users.name,users.last_name,users.email FROM `users` INNER JOIN `message` ON users.id=message.user_id_send WHERE message.user_id_recived=?", [req.USER.id]);
@@ -31,6 +31,7 @@ async function getMessage(req, res, next) {
         return res.status(500).end();
     }
 }
+
 async function getMessagesById(req, res, next) {
     let userId = req.params.id;
     try {

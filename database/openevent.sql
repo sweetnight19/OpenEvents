@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 5.1.0
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 03-05-2021 a las 18:07:37
--- Versión del servidor: 10.4.17-MariaDB
--- Versión de PHP: 8.0.2
+-- Servidor: localhost
+-- Tiempo de generación: 28-05-2021 a las 13:54:17
+-- Versión del servidor: 10.4.19-MariaDB
+-- Versión de PHP: 8.0.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -81,7 +81,7 @@ CREATE TABLE `events` (
   `name` varchar(255) NOT NULL,
   `owner_id` int(11) NOT NULL,
   `date` date NOT NULL DEFAULT current_timestamp(),
-  `image` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
   `location` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
   `eventStart_date` date NOT NULL,
@@ -142,7 +142,8 @@ INSERT INTO `events` (`id`, `name`, `owner_id`, `date`, `image`, `location`, `de
 (48, 'Voyatouch', 51, '2021-04-28', 'http://dummyimage.com/112x100.png/ff4444/ffffff', '8769 Katie Point', 'Inspection of Right Wrist Region, Open Approach', '2020-11-03', '2020-05-16', 68, 'Music'),
 (49, 'Rank', 90, '2021-04-28', 'http://dummyimage.com/133x100.png/ff4444/ffffff', '509 Parkside Hill', 'ROM & Jt Mobility Trmt Musculosk Up Back/UE w Prosthesis', '2020-10-03', '2021-03-29', 74, 'Travel'),
 (50, 'Latlux', 96, '2021-04-28', 'http://dummyimage.com/135x100.png/dddddd/000000', '14 Holmberg Lane', 'Drainage of Thorax Lymphatic with Drain Dev, Open Approach', '2020-09-05', '2020-10-28', 100, 'Culture'),
-(51, 'Cardify', 26, '2021-04-28', 'http://dummyimage.com/177x100.png/cc0000/ffffff', '27 Grover Park', 'Excision of R Metacarpophal Jt, Perc Endo Approach, Diagn', '2020-09-19', '2020-06-27', 57, 'Culture');
+(51, 'Cardify', 26, '2021-04-28', 'http://dummyimage.com/177x100.png/cc0000/ffffff', '27 Grover Park', 'Excision of R Metacarpophal Jt, Perc Endo Approach, Diagn', '2020-09-19', '2020-06-27', 57, 'Culture'),
+(52, 'Drawing Bears', 103, '2021-05-28', NULL, 'Barcelona', 'Description', '2020-09-18', '2020-09-19', 3, 'Education');
 
 -- --------------------------------------------------------
 
@@ -321,7 +322,8 @@ INSERT INTO `message` (`id`, `content`, `user_id_send`, `user_id_recived`, `time
 (97, 'Alteration of Right Knee Region, Percutaneous Approach', 27, 79, '2021-04-28'),
 (98, 'Replace of L Toe Phalanx with Nonaut Sub, Perc Endo Approach', 87, 45, '2021-04-28'),
 (99, 'Revision of Autol Sub in R Knee Jt, Open Approach', 89, 69, '2021-04-28'),
-(100, 'Release Left Vocal Cord, Open Approach', 96, 34, '2021-04-28');
+(100, 'Release Left Vocal Cord, Open Approach', 96, 34, '2021-04-28'),
+(101, 'Hola, que tal?!', 103, 2, '2021-05-28');
 
 -- --------------------------------------------------------
 
@@ -331,7 +333,7 @@ INSERT INTO `message` (`id`, `content`, `user_id_send`, `user_id_recived`, `time
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `image` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -442,7 +444,9 @@ INSERT INTO `users` (`id`, `image`, `name`, `last_name`, `email`, `password`) VA
 (97, 'http://dummyimage.com/131x100.png/ff4444/ffffff', 'Roseanna', 'Duxbarry', 'rduxbarry2o@shutterfly.com', 'c9392edac15d6cad16c425e15176288a03f51b0a11d57852ac9f5b2961daac94'),
 (98, 'http://dummyimage.com/226x100.png/5fa2dd/ffffff', 'Avivah', 'Daulton', 'adaulton2p@privacy.gov.au', 'a9f719f788f01a4e01177ecf2befc1cabc367710e6c6a862d067dce85e673fd6'),
 (99, 'http://dummyimage.com/189x100.png/dddddd/000000', 'Jobyna', 'Erwin', 'jerwin2q@wikimedia.org', '9446b4162e8ddff094fb867bf6f154eec36ee49205813f3c246f22e88ce7a673'),
-(100, 'http://dummyimage.com/184x100.png/dddddd/000000', 'Ewart', 'Topper', 'etopper2r@fema.gov', 'cabe20530ee34c0336ccc43803020c6bf6629e45ff1f0200870c4a88ed28021f');
+(100, 'http://dummyimage.com/184x100.png/dddddd/000000', 'Ewart', 'Topper', 'etopper2r@fema.gov', 'cabe20530ee34c0336ccc43803020c6bf6629e45ff1f0200870c4a88ed28021f'),
+(101, NULL, 'John', 'Doe', 'jonh@doe.com', '$2b$10$GxZHwPZ1Bnxts4YItbRskOgR1Yp4acE./Ji.tBekD53DuqZ5a2VaW'),
+(103, NULL, 'David', 'Marquet', 'david-marquet@hotmail.com', '$2b$10$oMLdR93IrYdPnoKOU4G3oeQtcMOvIGWn6sCsQhjaAPsqxsnq80XUe');
 
 --
 -- Índices para tablas volcadas
@@ -459,8 +463,7 @@ ALTER TABLE `assistance`
 -- Indices de la tabla `events`
 --
 ALTER TABLE `events`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `owner_id` (`owner_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `friends`
@@ -493,13 +496,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `events`
 --
 ALTER TABLE `events`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+
+--
+-- AUTO_INCREMENT de la tabla `message`
+--
+ALTER TABLE `message`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- Restricciones para tablas volcadas

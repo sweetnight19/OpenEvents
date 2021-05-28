@@ -18,13 +18,12 @@ async function addEvent(req, res) {
             n_participators: req.body.n_participators,
             type: req.body.type
         };
-        console.log(event);
         return res.status(204).json(event).end();
     } catch (ex) {
-        console.log(ex);
         return res.status(409).end();
     }
 }
+
 async function getEvents(req, res) {
     try {
         const [rows, fields] = await conn.promise().query("SELECT * FROM `events` ORDER BY events.id");
@@ -36,6 +35,7 @@ async function getEvents(req, res) {
         return res.status(409).end();
     }
 }
+
 async function getEventsById(req, res) {
     try {
         const [rows, fields] = await conn.promise().query("SELECT * FROM `events` WHERE `id`=?", [req.params.id]);
@@ -47,6 +47,7 @@ async function getEventsById(req, res) {
         return res.status(409).end();
     }
 }
+
 async function putEventsById(req, res) {
     if (req.body.name == undefined || req.body.location == undefined || req.body.description == undefined || req.body.eventStart_date == undefined || req.body.eventEnd_date == undefined || req.body.n_participators == undefined || req.body.type == undefined) {
         return res.status(400).end();
@@ -73,6 +74,7 @@ async function putEventsById(req, res) {
         return res.status(409).end();
     }
 }
+
 async function deleteEventsById(req, res) {
     try {
         const [rows, fields] = await conn.promise().query("SELECT `owner_id` FROM `events` WHERE `id`=?", [req.params.id]);
@@ -96,6 +98,7 @@ async function deleteEventsById(req, res) {
         return res.status(409).end();
     }
 }
+
 async function getListAssistancesEvents(req, res) {
     let rows = {};
     try {
@@ -117,6 +120,7 @@ async function getListAssistancesUser(req, res) {
         return res.status(409).end();
     }
 }
+
 async function postAssistancesEvents(req, res) {
     if (req.body.puntuation == undefined || req.body.comentary == undefined || req.params.id == undefined) {
         return res.status(400).end();
@@ -134,6 +138,7 @@ async function postAssistancesEvents(req, res) {
         return res.status(409).end();
     }
 }
+
 async function putInfoAssistanceEvent(req, res) {
     if (req.body.puntuation == undefined || req.body.comentary == undefined || req.params.id == undefined) {
         return res.status(400).end();
@@ -148,10 +153,10 @@ async function putInfoAssistanceEvent(req, res) {
         };
         return res.status(201).json(event).end();
     } catch (ex) {
-        console.log(ex);
         return res.status(409).end();
     }
 }
+
 async function deleteAssistanceEvent(req, res) {
     try {
         const [rows, fields] = await conn.promise().query("DELETE FROM `assistance` WHERE `user_id`=? AND `event_id`=?", [req.USER.id, req.params.id]);

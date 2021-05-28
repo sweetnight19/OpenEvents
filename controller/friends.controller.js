@@ -9,8 +9,6 @@ async function getFriendsRequest(req, res) {
             if (rows1.length === 0 && rows2.length === 0) {
                 return res.status(500).end();
             }
-            console.log(rows1);
-            console.log(rows2);
             if (rows1.length === 0) {
                 return res.status(200).json(rows2).end();
             }
@@ -28,6 +26,7 @@ async function getFriendsRequest(req, res) {
         return res.status(409).end();
     }
 }
+
 async function getFriends(req, res) {
     let rows = {};
 
@@ -54,6 +53,7 @@ async function getFriends(req, res) {
         return res.status(409).end();
     }
 }
+
 async function postFriendsRequest(req, res, next) {
     try {
         const [resultado] = await conn.promise().query("INSERT INTO `friends`(`user_id`, `user_id_friend`, `status`) VALUES (?,?,0)", [req.USER.id, req.params.id]);
@@ -71,6 +71,7 @@ async function acceptFriendsRequest(req, res, next) {
         return res.status(409).end();
     }
 }
+
 async function deleteFriendsRequest(req, res, next) {
     try {
         const [resultado] = await conn.promise().query("DELETE FROM `friends` WHERE `user_id`=? AND `user_id_friend`=?", [req.params.id, req.USER.id]);
