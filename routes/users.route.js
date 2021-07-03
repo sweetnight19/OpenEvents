@@ -35,22 +35,42 @@ router.delete("/", authenticate, users.deleteUser);
 router.get("/:id/events", authenticate, users.getListAssistancesEvents);
 
 // GET /users/ID/events/future Obté la llista d'events (que n'és propietari) l'usuari ID que encara no han succeït
-router.get("/:id/events/future", authenticate, users.getListAssistancesEventsFuture);
+router.get(
+  "/:id/events/future",
+  authenticate,
+  users.getListAssistancesEventsFuture
+);
 
 // GET /users/ID/events/finished Obté la llista d'events (que n'és propietari) l'usuari ID que ja han acabat
-router.get("/:id/events/finished", authenticate, users.getListAssistancesEventsPast);
+router.get(
+  "/:id/events/finished",
+  authenticate,
+  users.getListAssistancesEventsPast
+);
 
 // GET /users/ID/events/current Obté la llista d'events (que n'és propietari) l'usuari ID que están succeint en aquest moment.
-router.get("/:id/events/current", authenticate, users.getListAssistancesEventsCurrent);
+router.get(
+  "/:id/events/current",
+  authenticate,
+  users.getListAssistancesEventsCurrent
+);
 
 // GET /users/ID/assistances Obté la llista d'assistències a events per a l'usuari ID
 router.get("/:id/assistances", authenticate, users.getListAssistances);
 
 // GET /users/ID/assistances/future Obté la llista d'assistències a events per a l'usuari ID que encara no han succeît
-router.get("/:id/assistances/future", authenticate, users.getListAssistancesFuture);
+router.get(
+  "/:id/assistances/future",
+  authenticate,
+  users.getListAssistancesFuture
+);
 
 // GET /users/ID/assistances/finished Obté la llista d'assistències a events per a l'usuari ID que ja ha finalitzat
-router.get("/:id/assistances/finished", authenticate, users.getListAssistancesFinished);
+router.get(
+  "/:id/assistances/finished",
+  authenticate,
+  users.getListAssistancesFinished
+);
 
 // GET /users/ID/friends Obté el llistat d'usuaris que són amics de l'usuari ID
 router.get("/:id/friends", authenticate, users.getFriends);
